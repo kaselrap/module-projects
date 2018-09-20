@@ -10,7 +10,7 @@ class DB_Connect
      * 
      * @var object A database object
      */
-    protected $db;
+    protected $dbo;
 
     /**
      * Check for a DB objects or creates one f isn't found

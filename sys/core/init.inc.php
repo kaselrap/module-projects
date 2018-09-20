@@ -3,12 +3,12 @@
 /*
  * Include the necessary configuration info
  */
-include_once "../config/db-credentials.inc.php";
+include_once "../sys/config/db-credentials.inc.php";
 
 /*
  * Require the ORM library as ReadbeanPHP
  */
-require "rb-mysql.php";
+require "rb.php";
 /*
  * Define constants for configuration indo
  */
@@ -21,8 +21,7 @@ foreach ($C as $name => $value) {
  */
 
 $dsn = 'mysql:host='. DB_HOST .';dbname=' . DB_NAME;
-$dbo = R::setup( $dsn ,
-    DB_USER, DB_PASS );
+$dbo = R::setup( $dsn , DB_USER, DB_PASS );
 /*
  * Define the autoload function for classes
  */

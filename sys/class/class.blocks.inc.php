@@ -3,11 +3,11 @@
 /**
  * Class Projects
  */
-class Projects extends DB_Connect
+class Blocks extends DB_Connect
 {
     private $id;
 
-    private $project;
+    private $block;
 
     /**
      * Projects constructor.
@@ -25,12 +25,12 @@ class Projects extends DB_Connect
 
         switch ( $method ) {
             case 'load' :
-                $this->project = R::load('projects', $id);
+                $this->block = R::load('blocks', $id);
                 break;
 
             default :
-                $this->project = R::dispense('projects');
-                $this->project->date = time();
+                $this->block = R::dispense('blocks');
+                $this->block->date = time();
         }
 
     }
@@ -56,7 +56,7 @@ class Projects extends DB_Connect
      */
     public function setName($name)
     {
-        $this->project->name = $name;
+        $this->block->name = $name;
     }
 
     /**
@@ -64,11 +64,11 @@ class Projects extends DB_Connect
      */
     public function getName()
     {
-        return $this->project->name;
+        return $this->block->name;
     }
 
     public function __destruct()
     {
-        $this->id = R::store($this->project);
+        $this->id = R::store($this->block);
     }
 }

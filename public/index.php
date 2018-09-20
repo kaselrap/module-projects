@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Include necessary files
  */
 include_once '../sys/core/init.inc.php';
