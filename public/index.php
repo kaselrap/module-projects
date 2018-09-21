@@ -8,7 +8,7 @@ include_once '../sys/core/init.inc.php';
 $user = new User(
     $dbo,
     'load',
-    1,
+    1
 );
 
 $project = new Projects(
