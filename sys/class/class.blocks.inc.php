@@ -1,13 +1,15 @@
 <?php
 
 /**
- * Class Projects
+ * Class Blocks
  */
 class Blocks extends DB_Connect
 {
     private $id;
 
     private $block;
+
+    private static $order;
 
     /**
      * Projects constructor.
@@ -23,24 +25,18 @@ class Blocks extends DB_Connect
         */
         parent::__construct($dbo);
 
+
         switch ( $method ) {
             case 'load' :
-                $this->block = R::load('blocks', $id);
+                $this->block = R::load('block', $id);
                 break;
 
             default :
-                $this->block = R::dispense('blocks');
+                $this->block = R::dispense('block');
                 $this->block->date = time();
+                $this->block->order = $this->orderIncrement();
         }
 
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -48,27 +44,46 @@ class Blocks extends DB_Connect
      */
     public function getId()
     {
-        return $this->id;
+        return $this->block->id;
     }
 
     /**
-     * @param mixed $name
+     * @return array|\RedBeanPHP\OODBBean
      */
-    public function setName($name)
+    public function getBlock()
     {
-        $this->block->name = $name;
+        return $this->block;
+    }
+
+    /**
+     * @param mixed $order
+     */
+    public static function changeOrder($order)
+    {
+        $this->block->order = $order;
+    }
+
+    /**
+     * @return int
+     */
+    public function orderIncrement () {
+        return ++self::$order;
+    }
+
+    /**
+     * @param $module
+     */
+    public function setModule($module)
+    {
+        $this->block->ownBlockList[] = $module;
     }
 
     /**
      * @return mixed
      */
-    public function getName()
+    public function getModule()
     {
-        return $this->block->name;
+        return $this->block->ownBlockList;
     }
 
-    public function __destruct()
-    {
-        $this->id = R::store($this->block);
-    }
 }

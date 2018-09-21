@@ -15,7 +15,7 @@ class Projects extends DB_Connect
      * @param string $method
      * @param null $id
      */
-    public function __construct($dbo = NULL, $method = 'default', $id = null)
+    public function __construct($dbo = NULL, $method = 'default', $id = null, $name = null)
     {
         /**
         * Call the parent constructor to check for
@@ -25,22 +25,15 @@ class Projects extends DB_Connect
 
         switch ( $method ) {
             case 'load' :
-                $this->project = R::load('projects', $id);
+                $this->project = R::load('project', $id);
                 break;
 
             default :
-                $this->project = R::dispense('projects');
+                $this->project = R::dispense('project');
+                $this->project->name = $name;
                 $this->project->date = time();
         }
 
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -48,7 +41,7 @@ class Projects extends DB_Connect
      */
     public function getId()
     {
-        return $this->id;
+        return $this->project->id;
     }
 
     /**
@@ -67,8 +60,27 @@ class Projects extends DB_Connect
         return $this->project->name;
     }
 
-    public function __destruct()
+    /**
+     * @param mixed $block
+     */
+    public function setBlock($block)
     {
-        $this->id = R::store($this->project);
+        $this->project->ownProjectList[] = $block;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBlock()
+    {
+        return $this->project->ownProjectList;
+    }
+
+    /**
+     * @return array|\RedBeanPHP\OODBBean
+     */
+    public function getProject()
+    {
+        return $this->project;
     }
 }

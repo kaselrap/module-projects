@@ -22,13 +22,20 @@ foreach ($C as $name => $value) {
 
 $dsn = 'mysql:host='. DB_HOST .';dbname=' . DB_NAME;
 $dbo = R::setup( $dsn , DB_USER, DB_PASS );
-/*
+/**
  * Define the autoload function for classes
  */
-spl_autoload_register(function ($class_name) {
-    $filename = '../sys/class/class.' . mb_strtolower($class_name) . '.inc.php';
+spl_autoload_register(function ($className) {
+    $directorys = array(
+        'class/',
+        'class/module/'
+    );
 
-    if ( is_readable($filename) ) {
-        include_once $filename;
+    foreach ($directorys as $directory) {
+        $filename = '../sys/'. $directory .'class.' . mb_strtolower($className) . '.inc.php';
+
+        if ( is_readable($filename) ) {
+            include_once $filename;
+        }
     }
 });
