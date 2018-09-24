@@ -24,6 +24,10 @@ class Projects extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findByUserId' :
+                $this->project = R::find('project', 'user_id LIKE ?', array($id));
+                $this->save = false;
+                break;
             case 'load' :
                 $this->project = R::load('project', $id);
                 break;

@@ -28,9 +28,20 @@ class User extends DB_Connect
          */
         parent::__construct($dbo);
 
+        if( isset($id) && !empty($id) ) {
+            $this->id = $id;
+            session_start();
+            $_SESSION['user_id'] = $id;
+        }
+
         switch ( $method ) {
             case 'findAll' :
                 $this->user = R::findAll('user');
+                $this->save = false;
+                break;
+
+            case 'findById' :
+                $this->user = R::find('user', 'id = ?', array($id));
                 $this->save = false;
                 break;
 
@@ -47,6 +58,17 @@ class User extends DB_Connect
 
         }
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        if( isset($this->user->id) && !empty($this->user->id) ) {
+            return $this->user->id;
+        }
+        return $this->user->id;
     }
 
     /**
