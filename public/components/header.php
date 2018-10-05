@@ -8,6 +8,7 @@
     <title>Pojectss Module</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
     <link rel="stylesheet" href="./assets/libs/bootstrap-4.1.3-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="./assets/libs/baguetteBox/baguetteBox.min.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
-<body>

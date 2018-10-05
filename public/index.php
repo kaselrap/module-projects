@@ -47,7 +47,7 @@ $projects = new Projects(
 //        'default',
 //        null,
 //        'slider',
-//        4
+//        4,
 //    );
 //        $slider2 = new Slider(
 //            $dbo,
@@ -96,6 +96,15 @@ $projects = new Projects(
 //
 //$user->setProject($project->getProject());
 
+$images = new Image(
+    $dbo,
+    'find',
+    null,
+    null,
+    null,
+    true,
+    '10'
+);
 
 ?>
 
@@ -117,5 +126,82 @@ $projects = new Projects(
         <?php endforeach; ?>
     </div>
 </div>
+<div class="container">
+    <div class="logotype">
+        <i class="fas fa-camera photos"></i>
+<!--        <img src="./assets/images/2018/10/02/main_Снимок экрана от 2018-09-28 17-42-39._1538497224.png" alt="">-->
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="quiz col-md-8" data-type="text">
+            <p>Question</p>
+            <p class="question">
+                <input type="text" name="question" class="question">
+            </p>
+            <div class="answers">
+                <p>Poll options</p>
+                <div class="answers-list">
+                    <p class="answer">
+                        <input type="text" name="answer[]">
+                        <i class="fas fa-times remove-answer"></i>
+                    </p>
+                    <p class="answer">
+                        <input type="text" name="answer[]">
+                        <i class="fas fa-times remove-answer"></i>
+                    </p>
+                </div>
+                <p class="add-an-option">
+                    <input type="button" name="add-option" value="Add an option">
+                </p>
+            </div>
+        </div>
+        <div class="switcher col-md-4">
+            <div class="switcher-inner">
+                <a href="#" class="text-quiz active" data-type="text">Text</a>
+                <a href="#" class="image-quiz" data-type="image">Image</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="select-images">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row list-images">
+                    <?php foreach ($images->getImage() as $image) : ?>
+                        <div class="image col-md-2">
+                            <div class="image-inner">
+                                <i class="fas fa-check-circle check"></i>
+                                <a href="<?php echo $image->src; ?>" data-caption="<?php echo $image->alt; ?>">
+                                    <img src="<?php echo
+                                    (isset($image->srcPreview)
+                                        &&
+                                    !empty($image->srcPreview)) ?
+                                        $image->srcPreview :
+                                        $image->src; ?>" alt="<?php echo $image->alt; ?>">
+                                </a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="ajax-uploader" class="ajax-uploader">
+                    <div class="ajax-uploader-inner">
+                        <ul class="file-list">
+                        </ul>
+                        <p >
+                            Choose or drop files here
+                        </p>
+                    </div>
+                    <input class="ajax-file" id="ajax-file" type="file" name="images[]" multiple>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
 
+</div>
 <?php require_once 'components/footer.php';?>

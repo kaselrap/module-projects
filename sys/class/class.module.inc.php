@@ -23,7 +23,7 @@ class Module extends DB_Connect
      * @param null $name
      * @param null $grid
      */
-    public function __construct($dbo = NULL, $method = 'default', $id = null, $name = null, $grid = null)
+    public function __construct($dbo = NULL, $method = 'default', $id = null, $name = null, $grid = null, $order = null)
     {
         /**
          * Call the parent constructor to check for
@@ -47,7 +47,7 @@ class Module extends DB_Connect
                 $this->module->date = time();
                 $this->module->name = mb_strtolower($name);
                 $this->module->grid = $grid;
-                $this->module->order = $this->orderIncrement();
+                $this->module->order = $order;
 
         }
 
@@ -107,13 +107,6 @@ class Module extends DB_Connect
     public static function changeOrder($order)
     {
         $this->block->order = $order;
-    }
-
-    /**
-     * @return int
-     */
-    public function orderIncrement () {
-        return ++self::$order;
     }
 
     /**

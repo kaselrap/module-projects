@@ -24,7 +24,15 @@ class Image extends DB_Connect
      * @param null $src
      * @param null $alt
      */
-    public function __construct($dbo = NULL, $method = '', $id = null, $src = null, $alt = null)
+    public function __construct(
+        $dbo = NULL,
+        $method = '',
+        $id = null,
+        $src = null,
+        $alt = null,
+        $order = null,
+        $limit = null
+    )
     {
         /**
          * Call the parent constructor to check for
@@ -38,8 +46,25 @@ class Image extends DB_Connect
                     $id);
                 $this->save = false;
                 break;
+
+            case 'find' :
+                if ( $order && $limit) {
+                    $this->image = R::findAll('image', 'ORDER BY id DESC LIMIT ' . $limit);
+                } else if ($order) {
+                    $this->image = R::findAll('image', 'ORDER BY id DESC');
+                } else if ($limit) {
+                    $this->image = R::findAll('image', 'LIMIT ' . $limit);
+                } else {
+                    $this->image = R::findAll('image');
+                }
+                $this->save = false;
+                break;
             case 'findAll' :
-                $this->image = R::findAll('image');
+                if ( $order ) {
+                    $this->image = R::findAll('image', 'ORDER BY id DESC');
+                } else {
+                    $this->image = R::findAll('image');
+                }
                 $this->save = false;
                 break;
             case 'load' :
@@ -55,7 +80,12 @@ class Image extends DB_Connect
             default :
                 $this->image = R::dispense('image');
                 $this->image->date = time();
-                $this->image->src = $src;
+                if ( is_array($src) ) {
+                    $this->image->src = $src['main'];
+                    $this->image->srcPreview = $src['preview'];
+                } else {
+                    $this->image->src = $src;
+                }
                 $this->image->alt = $alt;
 
         }
@@ -110,11 +140,12 @@ class Image extends DB_Connect
         return $this->image;
     }
 
-    public function __destruct()
+    public function save()
     {
         if ($this->save) {
-            R::store($this->image);
+            $this->image->id = R::store($this->image);
         }
     }
+
 
 }

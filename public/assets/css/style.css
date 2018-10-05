@@ -5,6 +5,15 @@
 body {
     background: #f8f8f8;
 }
+a, a:hover {
+    text-decoration: none;
+}
+a {
+    color: #444;
+}
+a:hover {
+    color: #0c5460;
+}
 .project {
     padding: 5px;
 }
@@ -58,6 +67,7 @@ body {
 .project-page .module > div {
     border: 1px solid gray;
 }
+.project-page .module > .module-block,
 .project-page .module > .none {
     height: 100%;
     display: flex;
@@ -104,6 +114,23 @@ body {
     background: #3fdc54;
 }
 
+.project-page .window-images {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width: 100%;
+    background: white;
+    z-index: 7;
+}
+.project-page .window-images .row {
+    margin: 0;
+}
 .project-page .modal-window {
     position: fixed;
     top: 50%;
@@ -113,7 +140,7 @@ body {
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    min-height: 80%;
+    height: 80%;
     background: white;
     z-index: 5;
 }
@@ -126,21 +153,371 @@ body {
     background: #00000040;
 }
 .project-page .overlay,
-.project-page .modal-window {
+.project-page .modal-window,
+.project-page .window-images {
     display: none;
 }
+
 .project-page.modal .overlay,
-.project-page.modal .modal-window {
+.project-page.modal .modal-window,
+.project-page.images .window-images {
     display: block;
 }
 .project-page.modal .modal-window-inner {
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    padding: 15px 0;
     z-index: 6;
 }
 .project-page.modal .modal-window-inner .close-modal {
     position: absolute;
     top: 15px;
     right: 15px;
+}
+.project-page.modal .modal-window-inner .add-modal-module {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    color: #444;
+}
+.project-page.modal .modal-window-inner .modal-module .choose-images {
+    display: inline-block;
+    margin: 15px;
+}
+.project-page.modal .modal-window-inner .modal-module,
+.project-page.modal .modal-window-inner .modal-module .slider {
+    height: calc(100% - 30px);
+}
+.project-page.modal .modal-window-inner .modal-module .slider,
+.project-page.modal .modal-window-inner .modal-module .gallery{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .row,
+.project-page.modal .modal-window-inner .modal-module .gallery .row {
+    margin: 0;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .list-images,
+.project-page.modal .modal-window-inner .modal-module .gallery .list-images{
+    display: flex;
+    flex-wrap: wrap;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .list-images .image,
+.project-page.modal .modal-window-inner .modal-module .gallery .list-images .image{
+    position: relative;
+    width: 75px;
+    height: 75px;
+    border: 2px solid gray;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .list-images .image .remove-image,
+.project-page.modal .modal-window-inner .modal-module .gallery .list-images .image .remove-image{
+    position: absolute;
+    right: 5px;
+    color: red;
+    cursor: pointer;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .list-images .image .remove-image:hover,
+.project-page.modal .modal-window-inner .modal-module .gallery .list-images .image .remove-image:hover{
+    color: darkred;
+}
+.project-page.modal .modal-window-inner .modal-module .slider .list-images .image img ,
+.project-page.modal .modal-window-inner .modal-module .gallery .list-images .image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.select-images {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.select-images,
+.select-images div:not(.image){
+    height: 100%;
+}
+.select-images .image {
+    overflow: hidden;
+}
+.select-images .image .image-inner {
+    position: relative;
+    object-fit: cover;
+    height: 75px;
+    margin-bottom: 15px;
+}
+.select-images .image .image-inner .check {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    color: blue;
+    font-size: 27px;
+}
+
+.select-images .image.active .image-inner {
+    transform: scale(0.9);
+}
+
+.select-images .image.active .image-inner .check {
+    display: block;
+}
+
+.select-images .image img {
+    height: 100%;
+    object-fit:cover;
+}
+
+.ajax-uploader {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid gray;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.ajax-uploader .ajax-uploader-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 350px;
+    width: 100%;
+    padding: 15px;
+}
+
+.ajax-uploader .ajax-uploader-inner ul {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.ajax-uploader .ajax-uploader-inner ul li {
+    position: relative;
+    display: flex;
+    width: 75px;
+    height: 75px;
+    background: #00000021;
+    margin: 5px;
+    border-radius: 3px;
+    border: 3px solid #00000021;
+    overflow: hidden;
+    z-index: 2;
+}
+.ajax-uploader .ajax-uploader-inner ul li i.remove {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: 300;
+    color: #00000099;
+    cursor: pointer;
+    z-index: 4;
+}
+.ajax-uploader .ajax-uploader-inner ul li i.remove:hover {
+    color: #000;
+}
+.ajax-uploader .ajax-uploader-inner ul li img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    z-index: 3;
+}
+.ajax-uploader .ajax-uploader-inner ul li.uploaded:before {
+    display: none;
+}
+.ajax-uploader .ajax-uploader-inner ul li.loading:before {
+    display: none;
+}
+.ajax-uploader .ajax-uploader-inner ul li.loading:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    background: transparent;
+    border: 1px solid gray;
+    border-right-color: transparent;
+    -webkit-animation: rotation 2s infinite linear;
+}
+.ajax-uploader .ajax-file {
+    display: none;
+}
+.spinner {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 75px;
+    margin: 5px;
+    overflow: hidden;
+    z-index: 2;
+}
+.spinner:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    background: transparent;
+    border: 1px solid gray;
+    border-right-color: transparent;
+    -webkit-animation: rotation 2s infinite linear;
+}
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        -webkit-transform: translate(-50%, -50%) rotate(359deg);
+    }
+}
+
+.project-page.modal .modal-window-inner .modal-module textarea {
+    width: 100%;
+    min-height: 150px;
+}
+.project-page.modal .modal-window-inner .modal-module .article {
+    height: 100%;
+}
+.project-page.modal .modal-window-inner .modal-module .article #editor {
+    height: 70%;
+}
+.quiz {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.quiz .answers,
+.quiz .answer{
+    position: relative;
+}
+.quiz .question,
+.quiz .answer,
+.quiz .add-an-option{
+    width: 450px;
+}
+.quiz .add-an-option input {
+    padding: 5px;
+}
+
+.quiz .answer .photos {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    color: gray;
+    cursor: pointer;
+}
+.quiz .answer:hover .remove-answer {
+    display: block;
+}
+.quiz .answer .remove-answer {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    color: gray;
+    cursor: pointer;
+}
+.quiz .answer .remove-answer:hover,
+.quiz .answer:hover .photos {
+    color: darkgray;
+}
+.quiz input {
+    color: gray;
+    background: #fff;
+    border: 1px solid gray;
+    padding: 5px 0;
+    padding-left: 25px;
+    margin: 10px 0;
+    width: 100%;
+}
+.quiz input.image {
+    cursor: pointer;
+}
+.quiz input[type=button] {
+    text-align: left;
+    cursor : text;
+}
+.quiz[data-type=image] input[type=button] {
+    cursor: pointer;
+}
+.switcher .switcher-inner {
+    display: flex;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid gray;
+    border-radius: 30px;
+    overflow: hidden;
+}
+.switcher .switcher-inner a {
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+}
+.switcher .switcher-inner a.active,
+.switcher .switcher-inner a:hover {
+    background: gray;
+    color: #fff;
+}
+.modal-module .row {
+    height: 100%;
+}
+.logotype-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eee;
+    border: 1px solid gray;
+    border-radius: 3px;
+    width: 250px;
+    overflow: hidden;
+    height: 126px;
+    cursor: pointer;
+}
+.logotype-block:hover .photos  {
+    color: darkgray;
+}
+.logotype-block .photos {
+    color: gray;
+    font-size: 35px;
+}
+.logotype-block img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

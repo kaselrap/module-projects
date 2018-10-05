@@ -55,11 +55,17 @@ class Slider extends DB_Connect
             'autoplayHoverPause' => true,
             'sliderSpeed' => 5000,
             'sliderSpeedAnimation' => 600,
-            'animateInClass' => false,
-            'animateOutClass' => false,
             'navigation' => false,
             'pagination' => false
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 
     /**

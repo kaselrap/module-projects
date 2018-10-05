@@ -17,7 +17,7 @@ class Blocks extends DB_Connect
      * @param string $method
      * @param null $id
      */
-    public function __construct($dbo = NULL, $method = 'default', $id = null)
+    public function __construct($dbo = NULL, $method = 'default', $id = null, $order = null)
     {
         /**
         * Call the parent constructor to check for
@@ -34,7 +34,7 @@ class Blocks extends DB_Connect
             default :
                 $this->block = R::dispense('block');
                 $this->block->date = time();
-                $this->block->order = $this->orderIncrement();
+                $this->block->order = $order;
         }
 
     }
@@ -61,13 +61,6 @@ class Blocks extends DB_Connect
     public static function changeOrder($order)
     {
         $this->block->order = $order;
-    }
-
-    /**
-     * @return int
-     */
-    public function orderIncrement () {
-        return ++self::$order;
     }
 
     /**
