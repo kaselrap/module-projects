@@ -13,9 +13,7 @@ class Gallery extends DB_Connect
 
     private $imageIds;
 
-    private $params;
-
-    public function __construct($dbo = NULL, $method = 'default', $id = null, $imageIds = null, $params = null)
+    public function __construct($dbo = NULL, $method = 'default', $id = null, $imageIds = null)
     {
         parent::__construct($dbo);
 
@@ -57,5 +55,13 @@ class Gallery extends DB_Connect
     public function setImageIds($imageIds)
     {
         $this->imageIds = $imageIds;
+    }
+
+    /**
+     * @return array|\RedBeanPHP\OODBBean
+     */
+    public function getGallery()
+    {
+        return $this->gallery;
     }
 }
