@@ -3,7 +3,7 @@
 /**
  * Class HtmlCode
  */
-class HtmlCode extends DB_Connect
+class Html extends DB_Connect
 {
     private $id;
 
@@ -16,6 +16,18 @@ class HtmlCode extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findOne' :
+                $this->code = R::findOne(
+                    'code','module_id = ?', [$id ]
+                );
+                break;
+            case 'findByModuleId' :
+                $this->code = R::findLike(
+                    'code',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
             case 'load' :
                 $this->code = R::load('code', $id);
                 if( isset($html) && !empty($html) ) {

@@ -16,6 +16,18 @@ class Logotype extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findOne' :
+                $this->logotype = R::findOne(
+                    'logotype','module_id = ?', [$id ]
+                );
+                break;
+            case 'findByModuleId' :
+                $this->logotype = R::findLike(
+                    'logotype',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
             case 'load' :
                 $this->logotype = R::load('logotype', $id);
                 if( isset($imageId) && !empty($imageId) ) {

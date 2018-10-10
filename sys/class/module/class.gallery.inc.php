@@ -18,6 +18,18 @@ class Gallery extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findByModuleId' :
+                $this->gallery = R::findLike(
+                    'gallery',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
+            case 'findOne' :
+                $this->gallery = R::findOne(
+                    'gallery','module_id = ?', [$id ]
+                );
+                break;
             case 'load' :
                 $this->gallery = R::load('gallery', $id);
                 if( isset($imageIds) && !empty($imageIds) ) {

@@ -5,7 +5,6 @@
             'data-offset-module="'+ offsetModule +'">\n' +
             '<div class="control">\n' +
             '                <a href="#" class="remove-block"><i class="fas fa-trash"></i></a>\n'+
-            '                <a href="#" class="edit-module"><i class="fa fa-cog"></i></a>\n' +
             '                <a href="#" class="move-module"><i class="fa fa-bars"></i></a>\n' +
             '            </div>'+
             '                    <div class="none">\n' +
@@ -22,7 +21,7 @@
         row += col;
         if ( row <= 12 && !block.hasClass('fill') ) {
             block.attr('data-row', row);
-            block.append(column(col, parseInt(block.children().length + 1)));
+            block.append(column(col, parseInt(block.children().length)));
             if ( row == 12 ) {
                 block.addClass('fill');
             }
@@ -40,7 +39,7 @@
             row-=col;
             block.attr('data-row', row);
             module.nextAll().each(function () {
-                let offset = $(this).attr('data-offset-module') - 1;
+                let offset = $(this).attr('data-offset-module') - 2;
                 $(this).attr('data-offset-module', offset);
             });
             if( block.hasClass('fill') ) {
@@ -55,12 +54,21 @@
         let offsetBlock = parseInt($(document).find('.block').length + 1);
         project.append('<div class="row block" data-row="0" ' +
             'data-offset-block="' + offsetBlock  + '">\n' +
+            '<i id="removeSection" class="fas fa-times remove-section"> </i>' +
             '            </div>');
     }
     $(document).off('.click', '#addSection').on('click', '#addSection', function (e) {
         e.preventDefault();
         addBlock();
         sortableActivate();
+    });
+
+    $(document).off('.click', '#removeSection').on('click', '#removeSection', function () {
+        $(this).parent().nextAll().each(function () {
+            let offset = $(this).attr('data-offset-block') - 1;
+            $(this).attr('data-offset-block', offset);
+        });
+        $(this).parent().remove();
     });
 
     function sortableActivate() {
@@ -70,8 +78,8 @@
                 handle: '.move-module',
                 update: function (event, ui) {
                     $(this).children().each(function (index) {
-                        if ( $(this).attr('data-offset-module') != (index + 1) ) {
-                            $(this).attr('data-offset-module', (index + 1));
+                        if ( $(this).attr('data-offset-module') != (index) ) {
+                            $(this).attr('data-offset-module', (index));
                         }
                     });
                 }
@@ -196,15 +204,28 @@
                     listImages
                         .empty();
                     $.each(objects, function (key, value) {
-                        listImages
-                            .append('' +
-                                ' <div class="image col-md-2" data-id="'+ value.id +'" data-active="false">\n' +
-                                '      <div class="image-inner">\n' +
-                                '           <i class="fas fa-check-circle check"></i>\n' +
-                                '               <img src="' + value.src + '" alt="' + value.alt + '">' +
-                                '      </div>\n' +
-                                '</div>' +
-                                '');
+                        if ( !value.src_preview ) {
+                            listImages
+                                .append('' +
+                                    ' <div class="image col-md-2" data-id="'+ value.id +'" data-active="false">\n' +
+                                    '      <div class="image-inner">\n' +
+                                    '           <i class="fas fa-check-circle check"></i>\n' +
+                                    '               <img src="' + value.src + '" alt="' + value.alt + '">' +
+                                    '      </div>\n' +
+                                    '</div>' +
+                                    '');
+                        } else {
+                            listImages
+                                .append('' +
+                                    ' <div class="image col-md-2" data-id="'+ value.id +'" data-active="false">\n' +
+                                    '      <div class="image-inner">\n' +
+                                    '           <i class="fas fa-check-circle check"></i>\n' +
+                                    '               <img src="' + value.src_preview + '" alt="' + value.alt + '">' +
+                                    '      </div>\n' +
+                                    '</div>' +
+                                    '');
+                        }
+
                     });
                     chooseActiveImages();
                     addImagesToModule($('.modal-module .' + module + ' > .row > .list-images'));
@@ -216,7 +237,7 @@
     function chooseImage(click) {
         $(document).off('click', click).on('click', click, function (e) {
             e.preventDefault();
-            var self = $(this);
+            let self = $(this);
             if ( !$(this).hasClass('fill') ) {
                 $(this).addClass('active');
                 $('body').addClass('images');
@@ -231,15 +252,27 @@
                         listImages
                             .empty();
                         $.each(objects, function (key, value) {
-                            listImages
-                                .append('' +
-                                    ' <div class="image col-md-2" data-id="'+ value.id +'">\n' +
-                                    '      <div class="image-inner">\n' +
-                                    '           <i class="fas fa-check-circle check"></i>\n' +
-                                    '               <img src="' + value.src + '" alt="' + value.alt + '">' +
-                                    '      </div>\n' +
-                                    '</div>' +
-                                    '');
+                            if ( !value.src_preview ) {
+                                listImages
+                                    .append('' +
+                                        ' <div class="image col-md-2" data-id="'+ value.id +'" data-active="false">\n' +
+                                        '      <div class="image-inner">\n' +
+                                        '           <i class="fas fa-check-circle check"></i>\n' +
+                                        '               <img src="' + value.src + '" alt="' + value.alt + '">' +
+                                        '      </div>\n' +
+                                        '</div>' +
+                                        '');
+                            } else {
+                                listImages
+                                    .append('' +
+                                        ' <div class="image col-md-2" data-id="'+ value.id +'" data-active="false">\n' +
+                                        '      <div class="image-inner">\n' +
+                                        '           <i class="fas fa-check-circle check"></i>\n' +
+                                        '               <img src="' + value.src_preview + '" alt="' + value.alt + '">' +
+                                        '      </div>\n' +
+                                        '</div>' +
+                                        '');
+                            }
                         });
                         chooseActiveImage();
                         if ( self.hasClass('logotype-block') ) {
@@ -290,7 +323,7 @@
             e.preventDefault();
             removeActiveImageEventListener();
             let choosenImage = $('.add-images-to-module').next().find('.image.active');
-            var json = [];
+            let json = [];
             json.push(
                 {
                     id: choosenImage.attr('data-id'),
@@ -312,7 +345,7 @@
             e.preventDefault();
             removeActiveImageEventListener();
             let choosenImage = $('.add-images-to-module').next().find('.image.active');
-            var json = [];
+            let json = [];
             json.push(
                 {
                     id: choosenImage.attr('data-id'),
@@ -335,7 +368,7 @@
         $(document).off('click', '.add-images-to-module').on('click', '.add-images-to-module', function (e) {
             e.preventDefault();
             let choosenImages = $('.add-images-to-module').next().find('.image[data-active="true"]');
-            var json = [];
+            let json = [];
             if ( typeof module.attr('data-json') !== typeof undefined && module.attr('data-json') !== false ) {
                 json = JSON.parse(module.attr('data-json'));
             }
@@ -588,12 +621,12 @@
     }
     function uploadImages() {
         $('.ajax-uploader-inner').on('click', function() {
-            var self = $(this);
+            let self = $(this);
 
             $('.ajax-file').click();
             $('.ajax-file').on('change', function (e) {
-                var fd = new FormData();
-                var filesLength = $('#ajax-file')[0].files.length;
+                let fd = new FormData();
+                let filesLength = $('#ajax-file')[0].files.length;
                 for (let i = 0; i < filesLength; i++) {
                     $('.file-list').append('<li class="ajax-image-upload loading file-'+ i +'" data-id="'+ i +'"></li>');
                     fd.append('files[]', $('#ajax-file')[0].files[i]);
@@ -607,8 +640,8 @@
                         cache: false,
                         processData: false,
                         success: function (src) {
-                            var json = JSON.parse(src);
-                            for (var i = 0; i < filesLength; i++) {
+                            let json = JSON.parse(src);
+                            for (let i = 0; i < filesLength; i++) {
                                 $('.window-images').find('.list-images').append('<div class="image col-md-2" data-id="'+ json[i].id +'">\n' +
                                     '                            <div class="image-inner">\n' +
                                     '                                <i class="fas fa-check-circle check"></i>\n' +
@@ -630,7 +663,7 @@
     }
     uploadImages();
     function initEditor() {
-        var toolbarOptions = [
+        let toolbarOptions = [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
             [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
             [{ 'font': [] }],
@@ -650,7 +683,7 @@
 
             ['clean']                                         // remove formatting button
         ];
-        var quill = new Quill('#editor', {
+        let quill = new Quill('#editor', {
             theme: 'snow',
             modules: {
                 toolbar: toolbarOptions
@@ -738,237 +771,109 @@
 (function ($) {
     $(document).off('click', '.save-project').on('click', '.save-project', function () {
         var jsonProject = [];
+        jsonProject.push(
+            {name: $('.project-name input').val()}
+        );
         $(document).find('.project .block').each(function (index) {
-            let module          = $(this).children(),
+            var module          = $(this).children('.module'),
                 moduleColumn    = null,
                 offsetModule    = null,
                 moduleName      = null;
-            if ( module.length > 1 ) {
-                jsonProject.push(
-                    {
-                        blockId: index,
-                        module: []
-                    }
-                );
-                $.each(module, function (ind) {
-                    moduleColumn    = $(this).attr('data-column');
-                    offsetModule    = $(this).attr('data-offset-module');
-                    moduleName      = $(this).find('.module-block').attr('data-module');
-                    var self = $(this);
-
-                    switch (moduleName) {
-                        case 'slider' :
-                            let slider = JSON.parse(self.find('.module-block').attr('data-image-src'));
-                            jsonProject[index].push(
-                                {
-                                    module: {
-                                        column: moduleColumn,
-                                        name: moduleName,
-                                        offsetModule: offsetModule,
-                                        optionList: slider.optionList,
-                                        imageList: slider.listImages
-                                    }
-                                }
-                            );
-                            break;
-
-                        case 'video' :
-                            let video = JSON.parse(self.find('.module-block').attr('data-iframe'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    iframe: video.iframe
-                                }
-                            );
-                            break;
-
-                        case 'gallery' :
-                            let gallery = JSON.parse(self.find('.module-block').attr('data-image-src'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    imageList: gallery.listImages
-                                }
-                            );
-                            break;
-
-                        case 'article' :
-                            let article = JSON.parse(self.find('.module-block').attr('data-html'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    article: article.html
-                                }
-                            );
-                            break;
-
-                        case 'quiz' :
-                            let quiz = JSON.parse(self.find('.module-block').attr('data-quiz'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    question: quiz.question,
-                                    answers: quiz.answersList,
-                                    typeQuiz: quiz.type
-                                }
-                            );
-                            break;
-
-                        case 'logotype' :
-                            let logotype = JSON.parse(self.find('.module-block').attr('data-logotype'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    logotype: logotype
-                                }
-                            );
-                            break;
-
-                        case 'html' :
-                            let html = JSON.parse(self.find('.module-block').attr('data-html'));
-                            jsonProject[index].module.push(
-                                {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    html: html.code
-                                }
-                            );
-                            break;
-
-                        default:
-
-                    }
-                });
-            } else {
-                moduleColumn    = module.attr('data-column');
-                offsetModule    = module.attr('data-offset-module');
-                moduleName      = module.find('.module-block').attr('data-module');
+            jsonProject.push(
+                {
+                    blockId: index,
+                    module: []
+                }
+            );
+            $.each(module, function (ind) {
+                moduleColumn    = $(this).attr('data-column');
+                offsetModule    = $(this).attr('data-offset-module');
+                moduleName      = $(this).find('.module-block').attr('data-module');
+                var self = $(this);
                 switch (moduleName) {
                     case 'slider' :
-                        let slider = JSON.parse(module.find('.module-block').attr('data-image-src')),
-                            sliderListImages = slider.listImages,
-                            sliderImageList = [];
-                        $.each(sliderListImages, function (index) {
-                            sliderImageList.push(parseInt(sliderListImages[index].idImage));
-                        });
-                        jsonProject.push(
+                        let slider = JSON.parse(self.find('.module-block').attr('data-image-src'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    optionList: slider.optionList,
-                                    imageList: sliderImageList
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                optionList: slider.optionList,
+                                imageList: slider.listImages
                             }
                         );
                         break;
 
                     case 'video' :
-                        let video = JSON.parse(module.find('.module-block').attr('data-iframe'));
-                        jsonProject.push(
+                        let video = JSON.parse(self.find('.module-block').attr('data-iframe'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    iframe: video.iframe
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                iframe: video.iframe
                             }
                         );
                         break;
 
                     case 'gallery' :
-                        let gallery = JSON.parse(module.find('.module-block').attr('data-image-src')),
-                            galleryListImages = gallery.listImages,
-                            galleryImageList = [];
-                        $.each(galleryListImages, function (index) {
-                            galleryImageList.push(parseInt(galleryListImages[index].idImage));
-                        });
-                        jsonProject.push(
+                        let gallery = JSON.parse(self.find('.module-block').attr('data-image-src'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    imageList: galleryImageList
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                imageList: gallery.listImages
                             }
                         );
                         break;
 
                     case 'article' :
-                        let article = JSON.parse(module.find('.module-block').attr('data-html'));
-                        jsonProject.push(
+                        let article = JSON.parse(self.find('.module-block').attr('data-html'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    article: article.html
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                article: article.html
                             }
                         );
                         break;
 
                     case 'quiz' :
-                        let quiz = JSON.parse(module.find('.module-block').attr('data-quiz'));
-                        jsonProject.push(
+                        let quiz = JSON.parse(self.find('.module-block').attr('data-quiz'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    question: quiz.question,
-                                    answers: quiz.answers,
-                                    typeQuiz: quiz.type
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                question: quiz.question,
+                                answers: quiz.answersList,
+                                typeQuiz: quiz.type
                             }
                         );
                         break;
 
                     case 'logotype' :
-                        let logotype = JSON.parse(module.find('.module-block').attr('data-logotype'));
-                        jsonProject.push(
+                        let logotype = JSON.parse(self.find('.module-block').attr('data-logotype'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module : {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    logotype: logotype.id
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                logotype: logotype
                             }
                         );
                         break;
 
                     case 'html' :
-                        let html = JSON.parse(module.find('.module-block').attr('data-html'));
-                        jsonProject.push(
+                        let html = JSON.parse(self.find('.module-block').attr('data-html'));
+                        jsonProject[index + 1].module.push(
                             {
-                                blockId: index,
-                                module: {
-                                    column: moduleColumn,
-                                    name: moduleName,
-                                    offset: offsetModule,
-                                    html: html.code
-                                }
+                                column: moduleColumn,
+                                name: moduleName,
+                                offset: offsetModule,
+                                html: html.code
                             }
                         );
                         break;
@@ -976,12 +881,208 @@
                     default:
 
                 }
+            });
+        });
+        $.ajax({
+            url: 'saveToDB.php',
+            type: "POST",
+            data: {
+                data: JSON.stringify(jsonProject)
+            },
+            beforeSend: function( ) {
+                $('.overlay').css({'display' : 'block'}).html('<div class="spinner"></div>');
+            },
+            success: function (data) {
+                if ( data === 'success' ) {
+                    window.location.href = '/';
+                } else {
+                    $('.overlay')
+                        .html('<div style="' +
+                            'position: absolute;' +
+                            'top: 50%;' +
+                            'left: 50%;' +
+                            'transform: translate(-50%, -50%);' +
+                            'color: red; ' +
+                            'font-size: 27px;' +
+                            'text-transform: uppercase;">'+ data +'</div>');
+                    setTimeout(function () {
+                        $('.overlay').fadeOut(1000);
+
+                    }, 1000);
+                }
             }
         });
-        // console.log(JSON.stringify(jsonProject));
-        console.log(jsonProject);
-        $('.save-project').off('click');
     });
 })(jQuery);
-// Run gallery lithbox
-// const gallery = baguetteBox.run('.list-images');
+//Init some library for front-end visible cool
+(function ($) {
+    //Owl carousel
+    function init() {
+        const gallery = baguetteBox.run('.gallery .gallery-inner');
+        const slider = baguetteBox.run('.slider .slider-inner');
+        stOwlCarousel('.owl-carousel');
+    }
+    function stOwlCarousel(className) {
+        var sliders = $(className);
+        if ( sliders.length ) {
+            sliders.each(function () {
+                var slider = $(this),
+                    sliderItemsNumbers = slider.children().length,
+                    numberOfItems = 1,
+                    margin = 0,
+                    center = false,
+                    autoWidth = false,
+                    loop = false,
+                    autoplay = false,
+                    autoplayHoverPause = false,
+                    sliderSpeed = 5000,
+                    sliderSpeedAnimation = 600,
+                    animateInClass = false,
+                    animateOutClass = false,
+                    navigation = false,
+                    pagination = false;
+
+                if (typeof slider.data('number-of-items') !== 'undefined' && slider.data('number-of-items') !== false) {
+                    numberOfItems = slider.data('number-of-items');
+                }
+                if (typeof slider.data('margin') !== 'undefined' && slider.data('margin') !== false) {
+                    margin = slider.data('margin');
+                }
+                if (slider.data('center') === true) {
+                    center = true;
+                }
+                if (slider.data('auto-width') === true) {
+                    autoWidth = true;
+                }
+                if (slider.data('loop') === true) {
+                    loop = true;
+                }
+                if (slider.data('autoplay') === true) {
+                    autoplay = true;
+                }
+                if (slider.data('autoplay-hover-pause') === true) {
+                    autoplayHoverPause = true;
+                }
+                if (typeof slider.data('slider-speed') !== 'undefined' && slider.data('slider-speed') !== false) {
+                    sliderSpeed = parseInt(slider.data('slider-speed'));
+                }
+                if (typeof slider.data('slider-speed-animation') !== 'undefined' && slider.data('slider-speed-animation') !== false) {
+                    sliderSpeedAnimation = slider.data('slider-speed-animation');
+                }
+                if (typeof slider.data('slider-animate-in') !== 'undefined' && slider.data('slider-animate-in') !== false) {
+                    animateInClass = slider.data('slider-animate-in');
+                }
+                if (typeof slider.data('slider-animate-out') !== 'undefined' && slider.data('slider-animate-out') !== false) {
+                    animateOutClass = slider.data('slider-animate-out');
+                }
+                if (slider.data('navigation') === true) {
+                    navigation = true;
+                }
+                if (slider.data('pagination') === true) {
+                    pagination = true;
+                }
+                if (sliderItemsNumbers <= 1) {
+                    loop       = false;
+                    autoplay   = false;
+                    navigation = false;
+                    pagination = false;
+                }
+                var responsiveNumberOfItems1 = 1,
+                    responsiveNumberOfItems2 = 2,
+                    responsiveNumberOfItems3 = 3;
+                if (numberOfItems < 3) {
+                    responsiveNumberOfItems2 = numberOfItems;
+                    responsiveNumberOfItems3 = numberOfItems;
+                }
+                slider.owlCarousel({
+                    items: numberOfItems,
+                    loop: loop,
+                    autoplay: autoplay,
+                    autoplayHoverPause: autoplayHoverPause,
+                    autoplayTimeout: sliderSpeed,
+                    smartSpeed: sliderSpeedAnimation,
+                    margin: margin,
+                    center: center,
+                    autoWidth: autoWidth,
+                    animateInClass : animateInClass,
+                    animateOut : animateOutClass,
+                    dots: pagination,
+                    nav: navigation,
+                    navText: ['<span class="fas fa-angle-left"></span>','<span class="fas fa-angle-right"></span>'],
+                    responsive: {
+                        0: {
+                            items: responsiveNumberOfItems1,
+                            margin: 0,
+                            center: false,
+                            autoWidth: false
+                        },
+                        680: {
+                            items: responsiveNumberOfItems2
+                        },
+                        768: {
+                            items: responsiveNumberOfItems3
+                        },
+                        1024: {
+                            items: numberOfItems
+                        }
+                    }
+                });
+            });
+        }
+    }
+    init();
+})(jQuery);
+//Quiz script
+(function ($) {
+    $(document).off('click', '.quiz .answer a').on('click', '.quiz-box:not(.answered) .answer a', function (e) {
+        e.preventDefault();
+        let countVoted = parseInt($(this).parent().attr('data-number-vote')),
+            vote = 0,
+            answerId = $(this).parent().attr('data-answer-id');
+        countVoted += 1
+        $(this).parent().attr('data-number-vote', countVoted);
+        $(this).parents('.quiz').addClass('answered');
+        let sumVoted = 0;
+        $(this).parent().parent().children().each(function () {
+            sumVoted += Number($(this).attr('data-number-vote'));
+        });
+        $(this).parent().parent().children().each(function () {
+            vote = Number($(this).attr('data-number-vote'));
+            $(this).find('.percent').text(Math.round(vote*100/sumVoted) + '%');
+        });
+        $(this).parent().addClass('active');
+        $.ajax({
+            url: 'function.php',
+            type: "POST",
+            data: {
+                functionname: 'quizAnswered',
+                id:answerId,
+                vote: countVoted
+            },
+            success: function(data) {
+            }
+
+        });
+    });
+})(jQuery);
+
+//Remove project
+(function ($) {
+    $(document).off('click', '.remove-project').on('click', '.remove-project', function (e) {
+        e.preventDefault();
+        let projectId = $(this).attr('data-id-project');
+        // $(this).parents('.project').remove();
+        $.ajax({
+            url: 'function.php',
+            type: "POST",
+            data: {
+                functionname: 'deleteProject',
+                id:projectId
+            },
+            success: function(data) {
+                console.log(data);
+            }
+
+        });
+    });
+})(jQuery);

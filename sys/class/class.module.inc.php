@@ -32,6 +32,13 @@ class Module extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findByBlockId' :
+                $this->module = R::findLike(
+                    'module',
+                    ['block_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
             case 'load' :
                 $this->module = R::load('module', $id);
                 if( isset($name) && !empty($name) ) {
@@ -39,6 +46,9 @@ class Module extends DB_Connect
                 }
                 if( isset($grid) && !empty($grid) ) {
                     $this->module->grid = $grid;
+                }
+                if( isset($order) && !empty($order) ) {
+                    $this->module->order = $order;
                 }
                 break;
 
@@ -48,7 +58,6 @@ class Module extends DB_Connect
                 $this->module->name = mb_strtolower($name);
                 $this->module->grid = $grid;
                 $this->module->order = $order;
-
         }
 
     }
@@ -114,7 +123,7 @@ class Module extends DB_Connect
      */
     public function setModuleList($typeModule)
     {
-        $this->module->ownModuleList[] = $typeModule;
+        $this->module->xownTypeList[] = $typeModule;
     }
 
     /**
@@ -122,6 +131,6 @@ class Module extends DB_Connect
      */
     public function getModuleList()
     {
-        return $this->module->ownModuleList;
+        return $this->module->xownTypeList;
     }
 }

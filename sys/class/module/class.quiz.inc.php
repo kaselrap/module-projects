@@ -13,7 +13,9 @@ class Quiz extends DB_Connect
 
     private $question;
 
-    private $answersList;
+    private $answers;
+
+    private $save = false;
 
     public function __construct(
         $dbo = NULL,
@@ -27,6 +29,21 @@ class Quiz extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findByModuleId' :
+                $this->quiz = R::findLike(
+                    'quiz',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
+            case 'findOne' :
+                $this->quiz = R::findOne(
+                    'quiz','module_id = ?', [$id ]
+                );
+                $this->answers = R::findOne(
+                    'answers','quiz_id = ?', [$this->quiz->id]
+                );
+                break;
             case 'load' :
                 $this->quiz = R::load('quiz', $id);
                 if( isset($type) && !empty($type) ) {
@@ -35,17 +52,30 @@ class Quiz extends DB_Connect
                 if( isset($question) && !empty($question) ) {
                     $this->quiz->question = $question;
                 }
-                if( isset($answersList) && !empty($answersList) ) {
-                    $this->quiz->answersList = $answersList;
+                break;
+            case 'loadAnswer' :
+                $this->answers = R::load('answers', $id);
+                $this->quiz = R::load('quiz',$this->answers->quizId);
+                if (isset($type) && !empty($type)) {
+                    $this->answers->vote = $type;
+                }
+                if ( isset($question) && !empty($question) ) {
+                    $this->quiz->xownIpList[] = $question;
+                    $this->answers->xownIpList[] = $question;
                 }
                 break;
-
             default :
                 $this->quiz = R::dispense('quiz');
                 $this->quiz->date = time();
                 $this->quiz->type = $type;
                 $this->quiz->question = $question;
-                $this->quiz->answersList = $answersList;
+                foreach ($answersList as $key=>$answer) {
+                    $this->answers = R::dispense('answers');
+                    $this->answers->date = time();
+                    $this->answers->answer =  $answer;
+                    $this->quiz->xownAnswersList[] = $this->answers;
+                }
+
         }
     }
 
@@ -57,12 +87,32 @@ class Quiz extends DB_Connect
         return $this->quiz->id;
     }
 
+    public function getAnswerId()
+    {
+        return $this->answers->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVote () {
+        return $this->answers->vote;
+    }
+
+    /**
+     * @param $vote
+     */
+    public function setVote($vote)
+    {
+        $this->answers->vote = $vote;
+    }
+
     /**
      * @return mixed
      */
     public function getAnswersList()
     {
-        return $this->quiz->answersList;
+        return $this->quiz->xownAnswersList;
     }
 
     /**
@@ -70,7 +120,7 @@ class Quiz extends DB_Connect
      */
     public function setAnswersList($answersList)
     {
-        $this->quiz->answersList = $answersList;
+        $this->quiz->xownAnswersList[] = $this->answers;
     }
 
     /**
@@ -104,7 +154,19 @@ class Quiz extends DB_Connect
     {
         $this->quiz->type = $type;
     }
-
+    public function saveQuiz() {
+        R::store($this->quiz);
+    }
+    public function saveAnswer() {
+        R::store($this->answers);
+    }
+    /**
+     * @return array|\RedBeanPHP\OODBBean
+     */
+    public function getAnswers()
+    {
+        return $this->answers;
+    }
     /**
      * @return array|\RedBeanPHP\OODBBean
      */

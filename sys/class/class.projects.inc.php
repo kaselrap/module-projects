@@ -15,7 +15,7 @@ class Projects extends DB_Connect
      * @param string $method
      * @param null $id
      */
-    public function __construct($dbo = NULL, $method = 'default', $id = null, $name = null)
+    public function __construct($dbo = NULL, $method = 'default', $id = null, $id_project = null, $name = null)
     {
         /**
         * Call the parent constructor to check for
@@ -26,6 +26,10 @@ class Projects extends DB_Connect
         switch ( $method ) {
             case 'findByUserId' :
                 $this->project = R::find('project', 'user_id LIKE ?', array($id));
+                $this->save = false;
+                break;
+            case 'findProjectByUserId' :
+                $this->project = R::findOne('project', 'user_id = ? AND id = ?', array($id, $id_project));
                 $this->save = false;
                 break;
             case 'load' :
@@ -69,7 +73,7 @@ class Projects extends DB_Connect
      */
     public function setBlock($block)
     {
-        $this->project->ownProjectList[] = $block;
+        $this->project->xownBlockList[] = $block;
     }
 
     /**
@@ -77,7 +81,7 @@ class Projects extends DB_Connect
      */
     public function getBlock()
     {
-        return $this->project->ownProjectList;
+        return $this->project->xownBlockList;
     }
 
     /**
@@ -87,4 +91,5 @@ class Projects extends DB_Connect
     {
         return $this->project;
     }
+
 }

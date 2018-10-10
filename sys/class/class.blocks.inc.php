@@ -27,6 +27,13 @@ class Blocks extends DB_Connect
 
 
         switch ( $method ) {
+            case 'findByProjectId' :
+                $this->block = R::findLike(
+                    'block',
+                    ['project_id' => [$id]],
+                'ORDER by `order` '
+                );
+                break;
             case 'load' :
                 $this->block = R::load('block', $id);
                 break;
@@ -68,7 +75,7 @@ class Blocks extends DB_Connect
      */
     public function setModule($module)
     {
-        $this->block->ownBlockList[] = $module;
+        $this->block->xownModuleList[] = $module;
     }
 
     /**
@@ -76,7 +83,7 @@ class Blocks extends DB_Connect
      */
     public function getModule()
     {
-        return $this->block->ownBlockList;
+        return $this->block->xownModuleList;
     }
 
 }

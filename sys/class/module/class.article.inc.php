@@ -17,6 +17,18 @@ class Article extends DB_Connect
         parent::__construct($dbo);
 
         switch ( $method ) {
+            case 'findOne' :
+                $this->article = R::findOne(
+                    'article','module_id = ?', [$id ]
+                );
+                break;
+            case 'findByModuleId' :
+                $this->article = R::findLike(
+                    'article',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
             case 'load' :
                 $this->article = R::load('article', $id);
                 if( isset($text) && !empty($text) ) {

@@ -29,9 +29,11 @@ class User extends DB_Connect
         parent::__construct($dbo);
 
         if( isset($id) && !empty($id) ) {
-            $this->id = $id;
-            session_start();
-            $_SESSION['user_id'] = $id;
+            if ( !isset($_SESSION['user_id']) && empty($_SESSION['user_id']) ) {
+                $this->id = $id;
+                session_start();
+                $_SESSION['user_id'] = $id;
+            }
         }
 
         switch ( $method ) {
@@ -100,12 +102,12 @@ class User extends DB_Connect
      */
     public function setProject($project)
     {
-        $this->user->ownUserList[] = $project;
+        $this->user->xownProjectList[] = $project;
     }
 
     public function getProject()
     {
-        return $this->user->ownUserList;
+        return $this->user->xownProjectList;
     }
 
     public function __destruct()

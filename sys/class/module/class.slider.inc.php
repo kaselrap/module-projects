@@ -20,6 +20,21 @@ class Slider extends DB_Connect
         $this->initParams();
 
         switch ( $method ) {
+            case 'findByModuleId' :
+                $this->slider = R::findLike(
+                    'slider',
+                    ['module_id' => [$id]],
+                    'ORDER by `order` '
+                );
+                break;
+
+            case 'findOne' :
+                $this->slider = R::findOne(
+                    'slider','module_id = ?', [$id ]
+                );
+
+                break;
+
             case 'load' :
                 $this->slider = R::load('slider', $id);
                 if( isset($imageIds) && !empty($imageIds) ) {
